@@ -24,18 +24,26 @@ module Kekomi
         @field_types
       end
 
+      def valid_field_for?(klass, type)
+        valid_types = {
+          :block      => [:atom, :collection],
+          :collection => [:atom],
+          :atom       => [:atom]
+        }
+        valid_types[type.to_sym].include? @field_types[klass.to_s][:type]
+      end
+
       def add_field_type(type, klass)
         class_name = klass.to_s.demodulize
         if self.valid_field? class_name
           raise Kekomi::ContentTypes::Errors::DuplicateFieldType, "Field type #{class_name} already exists."
         else
           @field_types[class_name] = {
-            type: type,
+            type: type.to_sym,
             klass: klass
           }
         end
       end
-
 
     end
   end

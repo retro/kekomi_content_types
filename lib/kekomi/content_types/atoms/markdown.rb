@@ -34,6 +34,7 @@ module Kekomi
             markdown.instance_variable_set :@__html, value[:html_value]
             markdown
           end
+
         end
 
       end
