@@ -11,40 +11,16 @@ module Kekomi
         klass.class_eval &block
         Store.instance.add_field_type :collection, klass
         converter = Class.new(Converter)
-        converter.for = klass
         #converter.cast_on_read = true
         klass.const_set "Converter", converter
         klass
       end
 
       class Converter
-          include Mongoid::Fields::Serializable
+        include Mongoid::Fields::Serializable
 
-          def self.for=(klass)
-            @_klass = klass
-          end
-
-          def self.for
-            @_klass
-          end
-
-          def serialize(value)
-            {
-              type: self.class.for.to_s.demodulize,
-              value: value.serialize
-            }
-          end
-
-          def deserialize(value)
-            return nil if value.nil?
-            if @value.is_a? self.class.for
-              @value.deserialize value[:value]
-            else
-              @value = self.class.for.new value[:value]
-            end
-            @value
-          end
-        end
+        
+      end
 
       module Base
         extend ActiveSupport::Concern
@@ -66,9 +42,11 @@ module Kekomi
           serialized = self.map do |item|
             item.respond_to?(:serialize) ? item.serialize : item
           end
-          #puts serialized.class, serialized, serialized.size
-          serialized
-        end
+          {
+            type: self.class.to_s.demodulize,
+            value: serialized
+          }
+      end
 
         def deserialize(ary)
           #puts "DESERIALIZE", ary
