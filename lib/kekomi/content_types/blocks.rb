@@ -6,7 +6,7 @@ module Kekomi
         name = name.to_s.classify
         klass = Class.new
         self.const_set name, klass
-        [Base].each do |inc|
+        [Mongoid::Fields::Serializable, Base].each do |inc|
           klass.send :include, inc
         end
         klass.class_eval &block
@@ -14,9 +14,11 @@ module Kekomi
         Store.instance.add_field_type (klass.acts_as_atom?? :atom : :block), klass
         klass
       end
-      
+
       module Base
         extend ActiveSupport::Concern
+        extend Mongoid::Fields::Serializable
+
 
         def initialize(args={})
           set_values args
@@ -106,25 +108,8 @@ module Kekomi
           end
 
         end
-
-        included do
-
-          unless self.const_defined? "Converter"
-
-            converter = Class.new
-            self.const_set "Converter", converter
-            [Mongoid::Fields::Serializable, Kekomi::ContentTypes::Converter].each do | mod |
-              converter.send :include, mod
-            end
-            converter.for = self
-            converter.cast_on_read = true
-
-          end
-
-        end
+        
       end
     end
   end
 end
-
-

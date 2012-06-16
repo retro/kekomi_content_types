@@ -2,30 +2,23 @@ module Kekomi
   class ContentTypes
     class Collections
       def self.add(name, &block)
-        name = name.to_s.classify
+        name  = name.to_s.classify
         klass = Class.new(Array)
         self.const_set name, klass
-        [CoercedArray, Base].each do |inc|
+        [Mongoid::Fields::Serializable, CoercedArray, Base].each do |inc|
           klass.send :include, inc
         end
         klass.class_eval &block
         Store.instance.add_field_type :collection, klass
-        converter = Class.new(Converter)
-        #converter.cast_on_read = true
-        klass.const_set "Converter", converter
         klass
-      end
-
-      class Converter
-        include Mongoid::Fields::Serializable
-
-        
       end
 
       module Base
         extend ActiveSupport::Concern
+        extend Mongoid::Fields::Serializable
 
         module ClassMethods
+
           def allow(klass)
             klass = Store.instance.field_types[klass.to_s.classify.demodulize][:klass]
             if Store.instance.valid_field_for? klass, :collection
@@ -38,18 +31,12 @@ module Kekomi
         end
 
         def serialize
-          #puts "SERIALIZE"
-          serialized = self.map do |item|
+          self.map do |item|
             item.respond_to?(:serialize) ? item.serialize : item
           end
-          {
-            type: self.class.to_s.demodulize,
-            value: serialized
-          }
-      end
+        end
 
         def deserialize(ary)
-          #puts "DESERIALIZE", ary
           self.replace ary
         end
 
