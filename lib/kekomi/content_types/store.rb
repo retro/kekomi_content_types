@@ -30,7 +30,7 @@ module Kekomi
           :collection => [:atom],
           :atom       => [:atom]
         }
-        valid_types[type.to_sym].include? @field_types[klass.to_s][:type]
+        valid_types[type.to_sym].include? @field_types[klass.to_s.classify.demodulize][:type]
       end
 
       def add_field_type(type, klass)

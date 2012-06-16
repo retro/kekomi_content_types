@@ -18,6 +18,35 @@ module Kekomi
       module Base
         extend ActiveSupport::Concern
 
+        def initialize(args={})
+          set_values args
+        end
+
+        def deserialize(args={})
+          set_values args
+        end
+
+        def set_values(args={})
+          unless args.blank?
+            self.class.fields.each_pair do |key, value|
+              meth = "#{key}=".to_sym
+              if self.respond_to? meth
+                self.send meth, args.delete(key)
+              end
+            end
+          end
+        end
+
+        def serialize
+          serialized = {}
+          self.class.fields.each_pair do |key, field|
+            meth = "#{key}".to_sym
+            value = self.send(meth)
+            serialized[meth] = value.respond_to?(:serialize) ? value.serialize : value
+          end
+          serialized
+        end
+
         module ClassMethods
 
           def acts_as_atom?
@@ -54,8 +83,8 @@ module Kekomi
             @_fields.each_pair do |key, klass|
               klass = klass.to_s.classify
               block_type = self.acts_as_atom?? :atom : :block
-              if Kekomi::ContentTypes::Store.instance.valid_field_for? klass, block_type
-                klass = Kekomi::ContentTypes::Store.instance.field_types[klass][:klass]
+              if Store.instance.valid_field_for? klass, block_type
+                klass = Store.instance.field_types[klass][:klass]
                 if self.method_defined? "#{key}=".to_sym
                   alias_method "orig_#{key}=", "#{key}="
                   define_method "#{key}=" do |val|
@@ -74,6 +103,22 @@ module Kekomi
 
           def fields
             @_fields ||= {}
+          end
+
+        end
+
+        included do
+
+          unless self.const_defined? "Converter"
+
+            converter = Class.new
+            self.const_set "Converter", converter
+            [Mongoid::Fields::Serializable, Kekomi::ContentTypes::Converter].each do | mod |
+              converter.send :include, mod
+            end
+            converter.for = self
+            converter.cast_on_read = true
+
           end
 
         end

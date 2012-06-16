@@ -23,7 +23,12 @@ module Kekomi
       end
 
       def deserialize(value)
-        self.class.for.new(HashWithIndifferentAccess.new(value)[:value])
+        if @value.nil? or !@value.respond_to? :deserialize
+          @value = self.class.for.new(HashWithIndifferentAccess.new(value)[:value])
+        else
+          @value.deserialize(HashWithIndifferentAccess.new(value)[:value])
+        end
+        @value
       end
 
     end

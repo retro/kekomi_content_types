@@ -14,6 +14,5 @@ group :development do
   gem "bundler", "~> 1.1.4"
   gem "jeweler", "~> 1.8.3"
   gem "activesupport", "~> 3.2.5"
-  gem "typed-array", "~> 0.1.2"
   gem "kramdown"
 end

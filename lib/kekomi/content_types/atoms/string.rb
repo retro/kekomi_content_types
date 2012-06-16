@@ -8,7 +8,7 @@ module Kekomi
         def serialize
           self.to_s
         end
-
+        
       end
     end
   end

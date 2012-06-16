@@ -17,7 +17,8 @@ module Kekomi
       [Mongoid::Document, Mongoid::Timestamps, Kekomi::ContentTypes::Base].each do |inc|
         klass.send :include, inc
       end
-      klass.instance_eval &block
+      klass.class_eval &block
+      klass.before_save :serialize_fields
       klass
     end
 
