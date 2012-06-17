@@ -1,5 +1,6 @@
 require "active_support/inflector"
 require "active_support/concern"
+require "active_model"
 require 'active_support/core_ext/hash/indifferent_access'
 require "mongoid"
 require "kramdown"

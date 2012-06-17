@@ -3,6 +3,39 @@ module Kekomi
     module Base
       extend ActiveSupport::Concern
 
+      module ClassMethods
+
+        def serializable_fields
+          @_serializable_fields ||= {}
+        end
+
+        def field(name, options = {})
+
+          options.reverse_merge! :type => :string
+          class_name = options[:type].to_s.classify.demodulize
+          if Store.instance.valid_field? class_name
+            super name, { type: "#{Store.instance.field_types[class_name][:klass]}".constantize }
+            serializable_fields[name.to_s] = Store.instance.field_types[class_name][:klass]
+
+            define_method "#{name}=" do |val|
+              write_attribute name, val
+            end
+
+            define_method "#{name}" do
+              read_attribute name
+            end
+
+          else
+            raise Kekomi::ContentTypes::Errors::InvalidFieldType, "Field type #{options[:type]} is invalid."
+          end
+        end
+
+      end
+
+      included do
+        self.validate :validate_fields
+      end
+
       def serialize_fields
         self.class.serializable_fields.each_pair do |key, klass|
           value = attributes[key]
@@ -40,34 +73,19 @@ module Kekomi
         end
       end
 
-      module ClassMethods
+      protected
 
-        def serializable_fields
-          @_serializable_fields ||= {}
-        end
-
-        def field(name, options = {})
-
-          options.reverse_merge! :type => :string
-          class_name = options[:type].to_s.classify.demodulize
-          if Store.instance.valid_field? class_name
-            super name, { type: "#{Store.instance.field_types[class_name][:klass]}".constantize }
-            serializable_fields[name.to_s] = Store.instance.field_types[class_name][:klass]
-
-            define_method "#{name}=" do |val|
-              write_attribute name, val
+        def validate_fields
+          self.class.serializable_fields.each_pair do |key, klass|
+            field = self.read_attribute(key)
+            if !field.nil? and !field.valid?
+              field_errors = field.errors
+              field_errors.each do |field, error|
+                errors.add "#{key}.#{field}", error
+              end
             end
-
-            define_method "#{name}" do
-              read_attribute name
-            end
-
-          else
-            raise Kekomi::ContentTypes::Errors::InvalidFieldType, "Field type #{options[:type]} is invalid."
           end
         end
-
-      end
 
     end
   end

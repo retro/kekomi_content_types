@@ -6,7 +6,7 @@ module Kekomi
         name = name.to_s.classify
         klass = Class.new
         self.const_set name, klass
-        [Mongoid::Fields::Serializable, Base].each do |inc|
+        [Mongoid::Fields::Serializable, ActiveModel::Validations, Base].each do |inc|
           klass.send :include, inc
         end
         klass.class_eval &block

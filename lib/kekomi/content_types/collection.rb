@@ -6,11 +6,12 @@ module Kekomi
         name  = name.to_s.classify
         klass = Class.new(Array)
         self.const_set name, klass
-        [Mongoid::Fields::Serializable, CoercedArray, Base].each do |inc|
+        [Mongoid::Fields::Serializable, ActiveModel::Validations, CoercedArray, Base].each do |inc|
           klass.send :include, inc
         end
         klass.class_eval &block
         Store.instance.add_field_type :collection, klass
+        klass.validate :validate_members
         klass
       end
 
@@ -36,9 +37,23 @@ module Kekomi
           end
         end
 
+
         def deserialize(ary)
           self.replace ary
         end
+
+        protected
+
+          def validate_members
+            self.each_with_index do |item, i|
+              unless item.valid?
+                member_errors = item.errors
+                member_errors.each do |field, error|
+                  errors.add :"#{i}.#{field}", error
+                end
+              end
+            end
+          end
 
       end
     end

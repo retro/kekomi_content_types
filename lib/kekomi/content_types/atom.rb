@@ -9,6 +9,10 @@ module Kekomi
 
       end
 
+      def valid?
+        true
+      end
+
     end
   end
 end

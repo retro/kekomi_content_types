@@ -6,10 +6,11 @@ module Kekomi
         name  = name.to_s.classify
         klass = Class.new(Array)
         self.const_set name, klass
-        [Mongoid::Fields::Serializable, CoercedArray, Base].each do |inc|
+        [Mongoid::Fields::Serializable, ActiveModel::Validations, CoercedArray, Base].each do |inc|
           klass.send :include, inc
         end
         klass.class_eval &block
+        klass.validate :validate_members
         Store.instance.add_field_type :collection, klass
         klass
       end
@@ -58,6 +59,19 @@ module Kekomi
           raise Kekomi::ContentTypes::Errors::InvalidFieldType, "Field type #{item.class} is not allowed in compound field." unless self.class.allowed.include? item.class
           item
         end
+
+        protected
+
+          def validate_members
+            self.each_with_index do |item, i|
+              unless item.valid?
+                member_errors = item.errors
+                member_errors.each do |field, error|
+                  errors.add :"#{i}.#{field}", error
+                end
+              end
+            end
+          end
       end
 
 
