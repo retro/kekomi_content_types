@@ -10,6 +10,13 @@ module Kekomi
           klass.send :include, inc
         end
         klass.class_eval &block
+        if klass.acts_as_atom?
+          klass.fields.each_pair do |key, klass|
+            unless Store.instance.valid_field_for? klass, :atom
+              raise Kekomi::ContentTypes::Errors::InvalidFieldType, "Blocks that act as atoms can't include #{klass} fields." 
+            end
+          end
+        end
         klass.add_writers
         Store.instance.add_field_type (klass.acts_as_atom?? :atom : :block), klass
         klass
@@ -58,8 +65,8 @@ module Kekomi
           end
 
           def field(name, type = :string)
-            @_fields ||= {}
-            @_fields[name.to_sym] = type
+            
+            fields[name.to_sym] = type
             attr_reader name.to_sym
 
             define_method :"[]=" do |k, v|
