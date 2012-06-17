@@ -1,6 +1,6 @@
 module Kekomi
   class ContentTypes
-    class Blocks
+    class Block
 
       def self.add(name, &block)
         name = name.to_s.classify
@@ -17,8 +17,6 @@ module Kekomi
 
       module Base
         extend ActiveSupport::Concern
-        extend Mongoid::Fields::Serializable
-
 
         def initialize(args={})
           set_values args
@@ -108,7 +106,7 @@ module Kekomi
           end
 
         end
-        
+
       end
     end
   end

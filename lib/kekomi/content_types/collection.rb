@@ -1,6 +1,7 @@
 module Kekomi
   class ContentTypes
-    class Collections
+    class Collection
+
       def self.add(name, &block)
         name  = name.to_s.classify
         klass = Class.new(Array)
@@ -15,7 +16,6 @@ module Kekomi
 
       module Base
         extend ActiveSupport::Concern
-        extend Mongoid::Fields::Serializable
 
         module ClassMethods
 

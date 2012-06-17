@@ -1,5 +1,3 @@
-require "pp"
-
 module Kekomi
   class ContentTypes
     module Base

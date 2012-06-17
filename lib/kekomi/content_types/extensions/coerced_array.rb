@@ -116,11 +116,9 @@ module Kekomi
 
       # Ensure that the specific item passed is allowed
       def _coerce_value(item)
-        #puts "BEFORE COERCION",item
         unless item.is_a? self.class.allowed
           item = self.class.allowed.new(item)
         end
-        #puts "AFTER COERCION",item, item.serialize
         item
       end
 

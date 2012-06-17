@@ -28,7 +28,8 @@ module Kekomi
         valid_types = {
           :block      => [:atom, :collection],
           :collection => [:atom],
-          :atom       => [:atom]
+          :atom       => [:atom],
+          :compound   => [:atom, :collection, :block]
         }
         valid_types[type.to_sym].include? @field_types[klass.to_s.classify.demodulize][:type]
       end
