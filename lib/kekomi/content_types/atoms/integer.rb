@@ -1,6 +1,6 @@
 require "delegate"
 
-module Kekomi
+class Kekomi
   class ContentTypes
     module Atoms
       class Integer < DelegateClass(Fixnum)

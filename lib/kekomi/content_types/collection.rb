@@ -1,4 +1,4 @@
-module Kekomi
+class Kekomi
   class ContentTypes
     class Collection
 

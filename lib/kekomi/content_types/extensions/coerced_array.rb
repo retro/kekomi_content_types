@@ -1,7 +1,7 @@
 # This code uses https://github.com/yaauie/typed-array as a base,
 # but it tries to coerce values in array before setting them.
 
-module Kekomi
+class Kekomi
   class ContentTypes
     module CoercedArray
       extend ActiveSupport::Concern

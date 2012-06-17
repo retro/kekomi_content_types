@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "kekomi_content_types"
   gem.homepage = "http://github.com/retro/kekomi_content_types"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Content types library for Kekomi CMS}
+  gem.description = %Q{Content types library for Kekomi CMS}
   gem.email = "konjevic@gmail.com"
   gem.authors = ["Mihael Konjevic"]
   # dependencies defined in Gemfile

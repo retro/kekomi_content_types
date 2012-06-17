@@ -1,6 +1,6 @@
 require "singleton"
 
-module Kekomi
+class Kekomi
   class ContentTypes
     class Store
       include Singleton
