@@ -18,41 +18,13 @@ module Kekomi
           end
         end
         klass.add_writers
+        klass.validate :validate_members
         Store.instance.add_field_type (klass.acts_as_atom?? :atom : :block), klass
         klass
       end
 
       module Base
         extend ActiveSupport::Concern
-
-        def initialize(args={})
-          set_values args
-        end
-
-        def deserialize(args={})
-          set_values args
-        end
-
-        def set_values(args={})
-          unless args.blank?
-            self.class.fields.each_pair do |key, value|
-              meth = "#{key}=".to_sym
-              if self.respond_to? meth
-                self.send meth, args.delete(key)
-              end
-            end
-          end
-        end
-
-        def serialize
-          serialized = {}
-          self.class.fields.each_pair do |key, field|
-            meth = "#{key}".to_sym
-            value = self.send(meth)
-            serialized[meth] = value.respond_to?(:serialize) ? value.serialize : value
-          end
-          serialized
-        end
 
         module ClassMethods
 
@@ -113,6 +85,49 @@ module Kekomi
           end
 
         end
+
+        def initialize(args={})
+          set_values args
+        end
+
+        def deserialize(args={})
+          set_values args
+        end
+
+        def set_values(args={})
+          unless args.blank?
+            self.class.fields.each_pair do |key, value|
+              meth = "#{key}=".to_sym
+              if self.respond_to? meth
+                self.send meth, args.delete(key)
+              end
+            end
+          end
+        end
+
+        def serialize
+          serialized = {}
+          self.class.fields.each_pair do |key, field|
+            meth = "#{key}".to_sym
+            value = self.send(meth)
+            serialized[meth] = value.respond_to?(:serialize) ? value.serialize : value
+          end
+          serialized
+        end
+
+        protected
+          def validate_members
+            self.class.fields.each_pair do |key, field|
+              meth = key.to_sym
+              value = self.send(meth)
+              if !value.nil? and !value.valid?
+                member_errors = self.send(meth).errors
+                member_errors.each do |field, error|
+                  errors.add "#{key}.#{field}", error
+                end
+              end
+            end
+          end
 
       end
     end
