@@ -6,8 +6,8 @@ source "http://rubygems.org"
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 
-gem "mongoid", "~> 2.4.10"
-gem "activesupport", "~> 3.2.5"
+gem "mongoid", "~> 2.4.11"
+gem "activesupport", "~> 3.2.6"
 gem "kramdown"
 
 group :development do

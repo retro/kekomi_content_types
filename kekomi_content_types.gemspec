@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mihael Konjevic"]
-  s.date = "2012-06-17"
+  s.date = "2012-06-18"
   s.description = "Content types library for Kekomi CMS"
   s.email = "konjevic@gmail.com"
   s.extra_rdoc_files = [
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "kekomi_content_types.gemspec",
     "lib/kekomi/content_types.rb",
     "lib/kekomi/content_types/atom.rb",
     "lib/kekomi/content_types/atoms/integer.rb",
@@ -51,7 +52,6 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mongoid>, ["~> 2.4.10"])
-      s.add_runtime_dependency(%q<activesupport>, ["~> 3.2.5"])
       s.add_runtime_dependency(%q<kramdown>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
@@ -59,7 +59,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
     else
       s.add_dependency(%q<mongoid>, ["~> 2.4.10"])
-      s.add_dependency(%q<activesupport>, ["~> 3.2.5"])
       s.add_dependency(%q<kramdown>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
@@ -68,7 +67,6 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<mongoid>, ["~> 2.4.10"])
-    s.add_dependency(%q<activesupport>, ["~> 3.2.5"])
     s.add_dependency(%q<kramdown>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])

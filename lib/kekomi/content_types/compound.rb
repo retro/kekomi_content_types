@@ -11,7 +11,7 @@ class Kekomi
         end
         klass.class_eval &block
         klass.validate :validate_members
-        Store.instance.add_field_type :collection, klass
+        Store.instance.add_field_type :compound, klass
         klass
       end
 

@@ -1,18 +1,15 @@
 require "singleton"
-
+require "pp"
 class Kekomi
   class ContentTypes
     class Store
       include Singleton
 
-      def initialize
-        @content_types = {}
-        @field_types   = {}
-      end
+      attr_reader :content_types, :field_types
 
-      def add_content_type(content_type, field_definition)
-        self.content_types[content_type.to_s] ||= []
-        self.content_types[content_type.to_s] << field_definition
+      def initialize
+        @content_types = []
+        @field_types   = {}
       end
 
       def valid_field?(klass)
@@ -20,8 +17,26 @@ class Kekomi
         field_types.has_key? klass
       end
 
-      def field_types
-        @field_types
+      def fields_metadata
+        metadata = []
+        field_types.each_pair do |key, field|
+          type = field[:type]
+          type = :block if field[:klass].respond_to?(:acts_as_atom)
+          metadata << {
+            name: key,
+            type: type
+          }.merge(self.send "#{type}_metadata", field[:klass])
+        end
+        metadata
+      end
+
+      def content_types_metadata
+        content_types.map do |content_type|
+          {
+            name: content_type.to_s.demodulize,
+            fields: content_type.serializable_fields.map { |key, klass| {key => klass.to_s.classify.demodulize} }
+          }
+        end
       end
 
       def valid_field_for?(klass, type)
@@ -45,6 +60,30 @@ class Kekomi
           }
         end
       end
+
+      private
+
+        def atom_metadata(field)
+          {}
+        end
+
+        def block_metadata(field)
+          {
+            fields: field.fields.map { |key, klass| {key => klass.to_s.classify.demodulize} }
+          }
+        end
+
+        def collection_metadata(field)
+          {
+            allowed: field.allowed.to_s.demodulize
+          }
+        end
+
+        def compound_metadata(field)
+          {
+            allowed: field.allowed.map { |f| f.to_s.demodulize }
+          }
+        end
 
     end
   end

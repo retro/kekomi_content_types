@@ -19,6 +19,7 @@ class Kekomi
       end
       klass.class_eval &block
       klass.before_save :serialize_fields
+      Store.instance.content_types << klass
       klass
     end
 
