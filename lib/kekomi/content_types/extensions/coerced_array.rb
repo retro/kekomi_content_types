@@ -1,6 +1,5 @@
 # This code uses https://github.com/yaauie/typed-array as a base,
 # but it tries to coerce values in array before setting them.
-
 class Kekomi
   class ContentTypes
     module CoercedArray

@@ -32,9 +32,11 @@ class Kekomi
 
       def content_types_metadata
         content_types.map do |content_type|
+          fields = {}
+          content_type.serializable_fields.map { |key, klass| fields[key] = klass.to_s.classify.demodulize.underscore }
           {
             name: content_type.to_s.demodulize,
-            fields: content_type.serializable_fields.map { |key, klass| {key => klass.to_s.classify.demodulize} }
+            fields: fields
           }
         end
       end
@@ -68,8 +70,10 @@ class Kekomi
         end
 
         def block_metadata(field)
+          fields = {}
+          field.fields.map { |key, klass| fields[key] = klass }
           {
-            fields: field.fields.map { |key, klass| {key => klass.to_s.classify.demodulize} }
+            fields: fields
           }
         end
 

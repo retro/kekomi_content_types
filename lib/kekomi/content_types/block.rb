@@ -71,7 +71,7 @@ class Kekomi
                   end
                 else
                   define_method "#{key}=" do |val|
-                    self.send :instance_variable_set, :"@#{key}", klass.new(val)
+                    self.send :instance_variable_set, :"@#{key}", klass.new(val) unless val.nil?
                   end
                 end
               else
@@ -96,6 +96,7 @@ class Kekomi
 
         def set_values(args={})
           unless args.blank?
+            args = HashWithIndifferentAccess.new(args)
             self.class.fields.each_pair do |key, value|
               meth = "#{key}=".to_sym
               if self.respond_to? meth
