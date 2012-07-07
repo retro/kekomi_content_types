@@ -9,6 +9,14 @@ class Kekomi
           @_serializable_fields ||= {}
         end
 
+        def represent_with(field_name)
+          @representation_field = field_name
+        end
+
+        def represented_with
+          @representation_field || serializable_fields.keys.first
+        end
+
         def field(name, options = {})
 
           options.reverse_merge! :type => :string
@@ -23,6 +31,10 @@ class Kekomi
 
             define_method "#{name}" do
               read_attribute name
+            end
+
+            if @representation_field.nil? and Store.instance.field_types[class_name][:type] == :atom
+              represent_with name
             end
 
           else

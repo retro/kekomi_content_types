@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mihael Konjevic"]
-  s.date = "2012-06-29"
+  s.date = "2012-07-07"
   s.description = "Content types library for Kekomi CMS"
   s.email = "konjevic@gmail.com"
   s.extra_rdoc_files = [
