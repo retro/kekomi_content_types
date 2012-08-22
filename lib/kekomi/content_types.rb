@@ -23,7 +23,7 @@ class Kekomi
       klass.class_eval &block
       klass.before_save :serialize_fields
       klass.validates_presence_of klass.represented_with unless klass.represented_with.nil?
-      Store.instance.content_types << klass
+      Store.instance.content_types << klass unless Store.instance.content_types.map(&:to_s).include? klass.to_s
       klass
     end
 
