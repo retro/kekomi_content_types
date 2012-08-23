@@ -65,6 +65,9 @@ class Kekomi
         access = name.to_s
         if self.class.serializable_fields.has_key? access
           klass = self.class.serializable_fields[access]
+          if value.is_a? BSON::OrderedHash and !value["type"].nil? and !value["value"].nil?
+            value = value["value"]
+          end
           return attributes[access] = value.is_a?(klass) ? value : klass.new(value)
         else
           return super
